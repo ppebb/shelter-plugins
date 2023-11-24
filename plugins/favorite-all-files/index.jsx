@@ -56,7 +56,8 @@ function contextMenuOpen(payload) {
 
         addFavoriteButton.addEventListener("click", () => {
             addTargetAsFavorite(payload.contextMenu.target);
-            elem.remove(); // just removing the element from the dom can't be a good idea, but I don't know what else to do...
+            // elem.remove(); // just removing the element from the dom can't be a good idea, but I don't know what else to do...
+            document.getElementsByTagName("body")[0].click();
         })
 
         menuItems.appendChild(addFavoriteButton);
