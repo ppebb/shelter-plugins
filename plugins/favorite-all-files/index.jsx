@@ -1,10 +1,7 @@
 import { webpackChunk, createApi } from "@cumjar/websmack";
 const {
     flux: {
-        dispatcher,
-        stores: {
-            SelectedChannelStore
-        }
+        dispatcher
     },
     observeDom
 } = shelter;
@@ -12,7 +9,7 @@ const {
 const modules = webpackChunk();
 const api = modules && createApi([undefined, ...modules]);
 
-const module = api.findByCode('d\\.FrecencyUserSettingsActionCreators\\.updateAsync\\("favoriteGifs"');
+const module = api.findByCode("d\\.FrecencyUserSettingsActionCreators\\.updateAsync\\(\"favoriteGifs\"");
 
 function addTargetAsFavorite(target) {
     let src = target.dataset.safeSrc;
@@ -30,6 +27,37 @@ function addTargetAsFavorite(target) {
         height: target.clientHeight,
         format: 1
     });
+}
+
+let focusClass = null;
+function getFocusClass() {
+    if (focusClass != null)
+        return focusClass;
+
+    let messageCopyNativeLink = document.getElementById("message-copy-native-link");
+    messageCopyNativeLink.dispatchEvent(new MouseEvent("mouseenter", {
+        view: window,
+        bubbles: true,
+        cancelable: true
+    }));
+    messageCopyNativeLink.classList.forEach((c) => {
+        if (c.indexOf("focus") != -1)
+            focusClass = c;
+    });
+
+    messageCopyNativeLink.classList.remove(focusClass);
+
+    return focusClass;
+}
+
+function removeAllFocus(elem) {
+    elem.classList.forEach((c) => {
+        if (c.indexOf("focus") != -1)
+            elem.classList.remove(c);
+    });
+
+    for (child of elem.children)
+        removeAllFocus(child);
 }
 
 function contextMenuOpen(payload) {
@@ -58,7 +86,17 @@ function contextMenuOpen(payload) {
             addTargetAsFavorite(payload.contextMenu.target);
             // elem.remove(); // just removing the element from the dom can't be a good idea, but I don't know what else to do...
             document.getElementsByTagName("body")[0].click();
-        })
+        });
+
+        addFavoriteButton.addEventListener("mouseenter", () => {
+            removeAllFocus(elem);
+            elem.setAttribute("aria-activedescendant", "message-add-to-favorites");
+            addFavoriteButton.classList.add(getFocusClass());
+        });
+
+        addFavoriteButton.addEventListener("mouseleave", () => {
+            addFavoriteButton.classList.remove(getFocusClass());
+        });
 
         menuItems.appendChild(addFavoriteButton);
 
