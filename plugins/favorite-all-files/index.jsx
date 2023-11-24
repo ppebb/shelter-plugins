@@ -12,19 +12,11 @@ const api = modules && createApi([undefined, ...modules]);
 const module = api.findByCode("d\\.FrecencyUserSettingsActionCreators\\.updateAsync\\(\"favoriteGifs\"");
 
 function addTargetAsFavorite(target) {
-    let src = target.dataset.safeSrc;
-    if (src == undefined)
-        src = target.poster;
-
-    let url = target.href;
-    if (url == undefined)
-        url = target.src;
-
     module.addFavoriteGIF({
-        url: url,
-        src: src,
-        width: target.clientWidth,
-        height: target.clientHeight,
+        url: target.href ?? target.src,
+        src: target.dataset.safeSrc ?? target.poster ?? target.src,
+        width: target.clientWidth ?? 160,
+        height: target.clientHeight ?? 160,
         format: 1
     });
 }
@@ -61,7 +53,7 @@ function removeAllFocus(elem) {
 }
 
 function contextMenuOpen(payload) {
-    if (payload.contextMenu.target.nodeName != "A" && payload.contextMenu.target.nodeName != "VIDEO")
+    if (payload.contextMenu.target.nodeName != "A" && payload.contextMenu.target.nodeName != "VIDEO" && payload.contextMenu.target.nodeName != "IMG")
         return;
 
     const unObserve = observeDom("[class^=menu]", (elem) => {
