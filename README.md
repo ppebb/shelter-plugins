@@ -1,8 +1,5 @@
-# [Your name here]'s shelter plugins
+# ppeb shelter plugins!!!
 
-If you're reading this you should either change this README,
-or you should run `npx degit uwu/shelter-template shelter-plugins`!
+I have one plugin, copy the url into shelter.
 
-You should be using pnpm with this template ideally.
-
-You can build all plugins with `pnpm lune ci`.
+Favorite All Files: https://ppeb.me/files/dist/favorite-all-files/
