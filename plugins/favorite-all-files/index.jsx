@@ -53,8 +53,13 @@ function removeAllFocus(elem) {
 }
 
 function contextMenuOpen(payload) {
-    if (payload.contextMenu.target.nodeName != "A" && payload.contextMenu.target.nodeName != "VIDEO" && payload.contextMenu.target.nodeName != "IMG")
+    if (payload.contextMenu.target.nodeName != "A" && payload.contextMenu.target.nodeName != "VIDEO" && payload.contextMenu.target.nodeName != "IMG" && payload.contextMenu.target.nodeName != "DIV")
         return;
+
+    let divTarget = null
+    if (payload.contextMenu.target.nodeName == "DIV") {
+        divTarget = payload.contextMenu.target.parentElement.querySelector("video");
+    }
 
     const unObserve = observeDom("[class^=menu]", (elem) => {
         let menuItems = elem.querySelector("[class^=scroller]").querySelectorAll("[role^=group]")[2];
@@ -75,7 +80,7 @@ function contextMenuOpen(payload) {
         addFavoriteButton.appendChild(addFavoriteText);
 
         addFavoriteButton.addEventListener("click", () => {
-            addTargetAsFavorite(payload.contextMenu.target);
+            addTargetAsFavorite(divTarget ?? payload.contextMenu.target);
             // elem.remove(); // just removing the element from the dom can't be a good idea, but I don't know what else to do...
             document.getElementsByTagName("body")[0].click();
         });
