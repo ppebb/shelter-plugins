@@ -70,6 +70,19 @@ function contextMenuOpen(payload) {
     if (payload.contextMenu.target.nodeName != "A" && payload.contextMenu.target.nodeName != "VIDEO" && payload.contextMenu.target.nodeName != "IMG" && payload.contextMenu.target.nodeName != "DIV")
         return;
 
+    if (payload.contextMenu.target.nodeName == "DIV") {
+        let shouldContinue = false;
+        for (c of payload.contextMenu.target.classList) {
+            if (c.indexOf("cover") != -1 || (c.indexOf("wrapper") != 1 && payload.contextMenu.target.role == "img")) { // prevent button from showing up on random divs
+                shouldContinue = true;
+                break;
+            }
+        }
+
+        if (!shouldContinue)
+            return;
+    }
+
     let target = payload.contextMenu.target
     let avatar = false;
     if (payload.contextMenu.target.nodeName == "DIV") {
