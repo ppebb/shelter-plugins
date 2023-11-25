@@ -62,18 +62,19 @@ function contextMenuOpen(payload) {
     }
 
     const unObserve = observeDom("[class^=menu]", (elem) => {
-        let menuItems = elem.querySelector("[class^=scroller]").querySelectorAll("[role^=group]")[2];
-        let copyImageButton = menuItems.children[0];
-        let copyImageLabel = copyImageButton.children[0];
+        let menuItemGroup = elem.querySelector("[class^=scroller]").querySelectorAll("[role^=group]");
+        let menuItems = menuItemGroup[2] ?? menuItemGroup[1] // For some context menus they are shorter and [2] is undefined
+        let originalButton = menuItems.children[0];
+        let originalButtonlabel = originalButton.children[0];
 
         let addFavoriteButton = document.createElement("div");
-        addFavoriteButton.classList = copyImageButton.classList;
-        addFavoriteButton.role = copyImageButton.role;
+        addFavoriteButton.classList = originalButton.classList;
+        addFavoriteButton.role = originalButton.role;
         addFavoriteButton.dataset.menuItem = true;
         addFavoriteButton.id = "message-add-to-favorites";
 
         let addFavoriteLabel = document.createElement("div");
-        addFavoriteLabel.classList = copyImageLabel.classList;
+        addFavoriteLabel.classList = originalButtonlabel.classList;
 
         let addFavoriteText = document.createTextNode("Add to Favorites");
         addFavoriteLabel.appendChild(addFavoriteText);
