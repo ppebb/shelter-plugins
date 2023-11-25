@@ -13,10 +13,10 @@ const module = api.findByCode("d\\.FrecencyUserSettingsActionCreators\\.updateAs
 
 function addTargetAsFavorite(target, avatar) {
     module.addFavoriteGIF({
-        url: target.href ?? avatar ? target.src.replace("size=32", "size=128") :  target.src,
-        src: target.dataset.safeSrc ?? target.poster ?? avatar ? target.src.replace("size=32", "size=128") : target.src,
-        width: target.clientWidth ?? avatar ? 128 : 160,
-        height: target.clientHeight ?? avatar ? 128 : 160,
+        url: target.href ?? (avatar ? target.src.replace("size=32", "size=128") : target.src),
+        src: target.dataset.safeSrc ?? (target.poster ?? avatar ? target.src.replace("size=32", "size=128") : target.src),
+        width: target.clientWidth ?? (avatar ? 128 : 160),
+        height: target.clientHeight ?? (avatar ? 128 : 160),
         format: 1
     });
 }
