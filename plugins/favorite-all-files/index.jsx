@@ -11,12 +11,12 @@ const api = modules && createApi([undefined, ...modules]);
 
 const module = api.findByCode("d\\.FrecencyUserSettingsActionCreators\\.updateAsync\\(\"favoriteGifs\"");
 
-function addTargetAsFavorite(target) {
+function addTargetAsFavorite(target, avatar) {
     module.addFavoriteGIF({
-        url: target.href ?? target.src,
-        src: target.dataset.safeSrc ?? target.poster ?? target.src,
-        width: target.clientWidth ?? 160,
-        height: target.clientHeight ?? 160,
+        url: target.href ?? avatar ? target.src.replace("size=32", "size=128") :  target.src,
+        src: target.dataset.safeSrc ?? target.poster ?? avatar ? target.src.replace("size=32", "size=128") : target.src,
+        width: target.clientWidth ?? avatar ? 128 : 160,
+        height: target.clientHeight ?? avatar ? 128 : 160,
         format: 1
     });
 }
@@ -52,13 +52,33 @@ function removeAllFocus(elem) {
         removeAllFocus(child);
 }
 
+function findNestedImageTag(elem) {
+    for (child of elem.children) {
+        if (child.nodeName != "IMG") {
+            let possibleImg = findNestedImageTag(child);
+            if (possibleImg != null && possibleImg != undefined)
+                return possibleImg
+        }
+        else
+            return child
+    }
+
+    return null
+}
+
 function contextMenuOpen(payload) {
     if (payload.contextMenu.target.nodeName != "A" && payload.contextMenu.target.nodeName != "VIDEO" && payload.contextMenu.target.nodeName != "IMG" && payload.contextMenu.target.nodeName != "DIV")
         return;
 
-    let divTarget = null
+    let target = payload.contextMenu.target
+    let avatar = false;
     if (payload.contextMenu.target.nodeName == "DIV") {
-        divTarget = payload.contextMenu.target.parentElement.querySelector("video");
+        target = payload.contextMenu.target.parentElement.querySelector("video")
+
+        if (target == null || target == undefined) {
+            target = findNestedImageTag(payload.contextMenu.target);
+            avatar = true;
+        }
     }
 
     const unObserve = observeDom("[class^=menu]", (elem) => {
@@ -81,7 +101,7 @@ function contextMenuOpen(payload) {
         addFavoriteButton.appendChild(addFavoriteText);
 
         addFavoriteButton.addEventListener("click", () => {
-            addTargetAsFavorite(divTarget ?? payload.contextMenu.target);
+            addTargetAsFavorite(target, avatar);
             // elem.remove(); // just removing the element from the dom can't be a good idea, but I don't know what else to do...
             document.getElementsByTagName("body")[0].click();
         });
