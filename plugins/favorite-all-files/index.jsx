@@ -66,6 +66,38 @@ function findNestedImageTag(elem) {
     return null
 }
 
+function validButton(menuItem) {
+    if (menuItem == null || menuItem == undefined)
+        return false;
+
+    let isItem = false;
+    let isDisabled = false;
+    let isLabelContainer = false;
+    let isColorBrand = false;
+    for (c of menuItem.classList) {
+        if (c.indexOf("item") != -1 && !isItem)
+            isItem = true;
+
+        if (c.indexOf("disabled") != -1 && !isDisabled)
+            isDisabled = true;
+
+        if (c.indexOf("labelContainer") != -1 && !isLabelContainer)
+            isLabelContainer = true;
+
+        if (c.indexOf("colorBrand") != -1 && !isColorBrand)
+            isColorBrand = true;
+    }
+
+    return isItem && !isDisabled && isLabelContainer && !isColorBrand;
+}
+
+function getFirstButton(menuItemGroup) {
+    for (group of menuItemGroup)
+        for (child of group.children)
+            if (validButton(child))
+                return { group, child };
+}
+
 function contextMenuOpen(payload) {
     if (payload.contextMenu.target.nodeName != "A" && payload.contextMenu.target.nodeName != "VIDEO" && payload.contextMenu.target.nodeName != "IMG" && payload.contextMenu.target.nodeName != "DIV")
         return;
@@ -73,7 +105,7 @@ function contextMenuOpen(payload) {
     if (payload.contextMenu.target.nodeName == "DIV") {
         let shouldContinue = false;
         for (c of payload.contextMenu.target.classList) {
-            if (c.indexOf("cover") != -1 || (c.indexOf("wrapper") != 1 && payload.contextMenu.target.role == "img")) { // prevent button from showing up on random divs
+            if (c.indexOf("cover") != -1 || (c.indexOf("wrapper") != 1 && (payload.contextMenu.target.role == "img" || payload.contextMenu.target.children[0]?.nodeName == "IMG"))) { // prevent button from showing up on random divs
                 shouldContinue = true;
                 break;
             }
@@ -96,13 +128,14 @@ function contextMenuOpen(payload) {
 
     const unObserve = observeDom("[class^=menu]", (elem) => {
         let menuItemGroup = elem.querySelector("[class^=scroller]").querySelectorAll("[role^=group]");
-        let menuItems = menuItemGroup[2] ?? menuItemGroup[1] // For some context menus they are shorter and [2] is undefined
-        let originalButton = menuItems.children[0];
+        let ret = getFirstButton(menuItemGroup);
+        let menuItems = ret.group;
+        let originalButton = ret.child;
         let originalButtonlabel = originalButton.children[0];
 
         let addFavoriteButton = document.createElement("div");
         addFavoriteButton.classList = originalButton.classList;
-        addFavoriteButton.role = originalButton.role;
+        addFavoriteButton.role = "menuitem"; // This shouldn't change... I hope
         addFavoriteButton.dataset.menuItem = true;
         addFavoriteButton.id = "message-add-to-favorites";
 
@@ -114,9 +147,11 @@ function contextMenuOpen(payload) {
         addFavoriteButton.appendChild(addFavoriteText);
 
         addFavoriteButton.addEventListener("click", () => {
+            dispatcher.dispatch({
+                type: "CONTEXT_MENU_CLOSE",
+                contextMenu: payload.contextMenu
+            })
             addTargetAsFavorite(target, avatar);
-            // elem.remove(); // just removing the element from the dom can't be a good idea, but I don't know what else to do...
-            document.getElementsByTagName("body")[0].click();
         });
 
         addFavoriteButton.addEventListener("mouseenter", () => {
@@ -130,6 +165,9 @@ function contextMenuOpen(payload) {
         });
 
         menuItems.appendChild(addFavoriteButton);
+
+        let menuY = parseFloat(elem.parentElement.style.top);
+        elem.parentElement.style.top = (menuY - 32) + "px";
 
         unObserve();
     });
