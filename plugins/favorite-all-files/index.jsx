@@ -9,7 +9,7 @@ const {
 const modules = webpackChunk();
 const api = modules && createApi([undefined, ...modules]);
 
-const module = api.findByCode("d\\.FrecencyUserSettingsActionCreators\\.updateAsync\\(\"favoriteGifs\"");
+const module = api.findByCode("updateAsync\\(\"favoriteGifs\"");
 
 function addTargetAsFavorite(target, avatar) {
     module.addFavoriteGIF({
