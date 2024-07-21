@@ -9,10 +9,10 @@ const {
 const modules = webpackChunk();
 const api = modules && createApi([undefined, ...modules]);
 
-const module = api.findByCode("updateAsync\\(\"favoriteGifs\"");
+const fgModule = api.findByCode("updateAsync\\(\"favoriteGifs\"");
 
 function addTargetAsFavorite(target, avatar) {
-    module.addFavoriteGIF({
+    fgModule.uL({
         url: target.href ?? (avatar ? target.src.replace("size=32", "size=128") : target.src),
         src: target.dataset.safeSrc ?? target.poster ?? (avatar ? target.src.replace("size=32", "size=128") : target.src),
         width: target.clientWidth ?? (avatar ? 128 : 160),
