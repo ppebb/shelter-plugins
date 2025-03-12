@@ -27,16 +27,18 @@ function getFocusClass() {
         return focusClass;
 
     let messageCopyNativeLink = document.getElementById("message-copy-native-link");
-    messageCopyNativeLink.dispatchEvent(new MouseEvent("mouseenter", {
+    messageCopyNativeLink.dispatchEvent(new MouseEvent("mouseover", {
         view: window,
         bubbles: true,
         cancelable: true
     }));
+
     messageCopyNativeLink.classList.forEach((c) => {
         if (c.indexOf("focus") != -1)
             focusClass = c;
     });
 
+    // BUG: This only works on the second try?????
     messageCopyNativeLink.classList.remove(focusClass);
 
     return focusClass;
