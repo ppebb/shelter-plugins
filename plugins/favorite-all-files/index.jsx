@@ -50,12 +50,12 @@ function removeAllFocus(elem) {
             elem.classList.remove(c);
     });
 
-    for (child of elem.children)
+    for (const child of elem.children)
         removeAllFocus(child);
 }
 
 function findNestedImageTag(elem) {
-    for (child of elem.children) {
+    for (const child of elem.children) {
         if (child.nodeName != "IMG") {
             let possibleImg = findNestedImageTag(child);
             if (possibleImg != null && possibleImg != undefined)
@@ -76,7 +76,7 @@ function validButton(menuItem) {
     let isDisabled = false;
     let isLabelContainer = false;
     let isColorBrand = false;
-    for (c of menuItem.classList) {
+    for (const c of menuItem.classList) {
         if (c.indexOf("item") != -1 && !isItem)
             isItem = true;
 
@@ -94,8 +94,8 @@ function validButton(menuItem) {
 }
 
 function getFirstButton(menuItemGroup) {
-    for (group of menuItemGroup)
-        for (child of group.children)
+    for (const group of menuItemGroup)
+        for (const child of group.children)
             if (validButton(child))
                 return { group, child };
 }
@@ -106,7 +106,7 @@ function contextMenuOpen(payload) {
 
     if (payload.contextMenu.target.nodeName == "DIV") {
         let shouldContinue = false;
-        for (c of payload.contextMenu.target.classList) {
+        for (const c of payload.contextMenu.target.classList) {
             if (c.indexOf("cover") != -1 || (c.indexOf("wrapper") != 1 && (payload.contextMenu.target.role == "img" || payload.contextMenu.target.children[0]?.nodeName == "IMG"))) { // prevent button from showing up on random divs
                 shouldContinue = true;
                 break;
