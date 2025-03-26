@@ -1,4 +1,4 @@
-import { webpackChunk, createApi } from "@cumjar/websmack";
+import { createApi, webpackChunk } from "@cumjar/websmack";
 const {
     flux: {
         dispatcher
@@ -26,7 +26,7 @@ function getFocusClass() {
     if (focusClass != null)
         return focusClass;
 
-    let messageCopyNativeLink = document.getElementById("message-copy-native-link");
+    const messageCopyNativeLink = document.getElementById("message-copy-native-link");
     messageCopyNativeLink.dispatchEvent(new MouseEvent("mouseover", {
         view: window,
         bubbles: true,
@@ -57,15 +57,15 @@ function removeAllFocus(elem) {
 function findNestedImageTag(elem) {
     for (const child of elem.children) {
         if (child.nodeName != "IMG") {
-            let possibleImg = findNestedImageTag(child);
+            const possibleImg = findNestedImageTag(child);
             if (possibleImg != null && possibleImg != undefined)
-                return possibleImg
+                return possibleImg;
         }
         else
-            return child
+            return child;
     }
 
-    return null
+    return null;
 }
 
 function validButton(menuItem) {
@@ -117,10 +117,10 @@ function contextMenuOpen(payload) {
             return;
     }
 
-    let target = payload.contextMenu.target
+    let target = payload.contextMenu.target;
     let avatar = false;
     if (payload.contextMenu.target.nodeName == "DIV") {
-        target = payload.contextMenu.target.parentElement.querySelector("video")
+        target = payload.contextMenu.target.parentElement.querySelector("video");
 
         if (target == null || target == undefined) {
             target = findNestedImageTag(payload.contextMenu.target);
@@ -129,22 +129,22 @@ function contextMenuOpen(payload) {
     }
 
     const unObserve = observeDom("[class^=menu]", (elem) => {
-        let menuItemGroup = elem.querySelector("[class^=scroller]").querySelectorAll("[role^=group]");
-        let ret = getFirstButton(menuItemGroup);
-        let menuItems = ret.group;
-        let originalButton = ret.child;
-        let originalButtonlabel = originalButton.children[0];
+        const menuItemGroup = elem.querySelector("[class^=scroller]").querySelectorAll("[role^=group]");
+        const ret = getFirstButton(menuItemGroup);
+        const menuItems = ret.group;
+        const originalButton = ret.child;
+        const originalButtonlabel = originalButton.children[0];
 
-        let addFavoriteButton = document.createElement("div");
+        const addFavoriteButton = document.createElement("div");
         addFavoriteButton.classList = originalButton.classList;
         addFavoriteButton.role = "menuitem"; // This shouldn't change... I hope
         addFavoriteButton.dataset.menuItem = true;
         addFavoriteButton.id = "message-add-to-favorites";
 
-        let addFavoriteLabel = document.createElement("div");
+        const addFavoriteLabel = document.createElement("div");
         addFavoriteLabel.classList = originalButtonlabel.classList;
 
-        let addFavoriteText = document.createTextNode("Add to Favorites");
+        const addFavoriteText = document.createTextNode("Add to Favorites");
         addFavoriteLabel.appendChild(addFavoriteText);
         addFavoriteButton.appendChild(addFavoriteText);
 
@@ -152,7 +152,7 @@ function contextMenuOpen(payload) {
             dispatcher.dispatch({
                 type: "CONTEXT_MENU_CLOSE",
                 contextMenu: payload.contextMenu
-            })
+            });
             addTargetAsFavorite(target, avatar);
         });
 
@@ -168,7 +168,7 @@ function contextMenuOpen(payload) {
 
         menuItems.appendChild(addFavoriteButton);
 
-        let menuY = parseFloat(elem.parentElement.style.top);
+        const menuY = parseFloat(elem.parentElement.style.top);
         elem.parentElement.style.top = (menuY - 32) + "px";
 
         unObserve();
