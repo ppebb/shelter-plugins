@@ -21,27 +21,30 @@ function addTargetAsFavorite(target, avatar) {
     });
 }
 
-let focusClass = null;
+// TODO: Automatically determine focus class.
+
+// let focusClass = null;
 function getFocusClass() {
-    if (focusClass != null)
-        return focusClass;
+    return "focused_c1e9c4";
+    // if (focusClass != null)
+    //     return focusClass;
 
-    const messageCopyNativeLink = document.getElementById("message-copy-native-link");
-    messageCopyNativeLink.dispatchEvent(new MouseEvent("mouseover", {
-        view: window,
-        bubbles: true,
-        cancelable: true
-    }));
+    // const messageCopyNativeLink = document.getElementById("message-copy-native-link");
+    // messageCopyNativeLink.dispatchEvent(new MouseEvent("mouseover", {
+    //     view: window,
+    //     bubbles: true,
+    //     cancelable: true
+    // }));
 
-    messageCopyNativeLink.classList.forEach((c) => {
-        if (c.indexOf("focus") != -1)
-            focusClass = c;
-    });
+    // messageCopyNativeLink.classList.forEach((c) => {
+    //     if (c.indexOf("focus") != -1)
+    //         focusClass = c;
+    // });
 
-    // BUG: This only works on the second try?????
-    messageCopyNativeLink.classList.remove(focusClass);
+    // // BUG: This only works on the second try?????
+    // messageCopyNativeLink.classList.remove(focusClass);
 
-    return focusClass;
+    // return focusClass;
 }
 
 function removeAllFocus(elem) {
